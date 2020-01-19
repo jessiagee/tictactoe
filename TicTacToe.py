@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 def display_board(board, player = '', selection = 0):
     board[selection] = player
     
@@ -33,7 +36,11 @@ def check_rows_and_columns(*args):
     return False
 
 def start_game():
-    player1 = validate_player()
+    user_input = 'Player 1 please pick a marker [X, O]: '
+    valid_key_1 = 'X'
+    valid_key_2 = 'O'
+    
+    player1 = validate_input(user_input, valid_key_1, valid_key_2)
     
     if player1 == 'X':
         player2 = 'O'
@@ -46,7 +53,7 @@ def start_game():
 
 def run_game(player1, player2):
     player = player1
-    board = []
+    board = [''] * 9
     selected_num = []
     no_winner = True
     
@@ -74,7 +81,11 @@ def run_game(player1, player2):
             replay()
 
 def replay():
-    replay = validate_replay()
+    user_input = 'Do you want to play again? [Y, N]'
+    valid_key_1 = 'Y'
+    valid_key_2 = 'N'
+    
+    replay = validate_input(user_input, valid_key_1, valid_key_2)
     
     if replay == 'Y':
         start_game()
@@ -101,26 +112,17 @@ def validate_selection(selection, selected_num):
                     selected_num.append(user_input)
                     return user_input
 
-def validate_player():    
+def validate_input(user_input, valid_key_1, valid_key_2):
+    to_validate = ''
+    
     while True:
-        player = input("\nPlayer 1 please pick a marker [X, O]: ")
-        player = player.upper()
+        to_validate = input(user_input)
+        to_validate = to_validate.upper()
         
-        if player == "X" or player == "O":
-            return player
+        if (to_validate == valid_key_1 or to_validate == valid_key_2):
+            return to_validate
         else:
-            print("Incorrect player option! Try again.")
+            print("Incorrect option! Try again.")
             continue
-
-def validate_replay():    
-    while True:
-        replay = input(f'\nDo you want to play again? [Y, N]')
-        replay = replay.upper()
-        
-        if replay == "Y" or replay == "N":
-            return replay
-        else:
-            print("Incorrect replay option! Try again.")
-            continue            
             
 start_game()
