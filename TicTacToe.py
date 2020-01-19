@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[56]:
-
-
 def display_board(board, player = '', selection = 0):
     board[selection] = player
     
@@ -130,16 +124,3 @@ def validate_replay():
             continue            
             
 start_game()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
