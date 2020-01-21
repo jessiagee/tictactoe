@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 '''
 A tic tac toe game done for Complete Python Bootcamp
 '''
@@ -216,15 +213,6 @@ def validate_input(user_input, valid_key_1, valid_key_2):
             
 # entry point for the game      
 start_game()
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
