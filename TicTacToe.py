@@ -1,8 +1,26 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-def display_board(board, player = '', selection = 0):
-    board[selection] = player
+# In[1]:
+
+
+'''
+A tic tac toe game done for Complete Python Bootcamp
+'''
+
+import random
+
+def display_board(board, marker = '', selection = 0):
+    '''
+    Display the tic tac toe board
+    
+    INPUT: board (list)
+            marker (string)
+            selection (int)
+
+    OUTPUT: bool (False if someone has won, True otherwise)
+    '''
+    board[selection] = marker
     
     print(board[0] + '  |  ' + board[1] + '  |  ' + board[2] + '\n____________')
     print(board[3] + '  |  ' + board[4] + '  |  ' + board[5] + '\n____________') 
@@ -27,6 +45,13 @@ def display_board(board, player = '', selection = 0):
         return True
 
 def check_rows_and_columns(*args):
+    '''
+    Checks the rows and columns for a winner
+    
+    INPUT: *args (eight lists for the rows, columns, and diagonols) 
+
+    OUTPUT: bool (True if a row is full with the same marker, False otherwise)
+    '''
     for row_col in args:
         # if there's only one item in the set for this row/col
         # and there's no empty spaces, the player has won
@@ -36,52 +61,64 @@ def check_rows_and_columns(*args):
     return False
 
 def start_game():
-    user_input = 'Player 1 please pick a marker [X, O]: '
-    valid_key_1 = 'X'
-    valid_key_2 = 'O'
+    '''
+    Starts the game after assigning players and markers
+    '''
+    player, player1_marker, other_player, player2_marker = assign_players_and_markers()
     
-    player1 = validate_input(user_input, valid_key_1, valid_key_2)
-    
-    if player1 == 'X':
-        player2 = 'O'
-    else:
-        player2 = 'X'
-    
-    print(f'\nPlayer 1 is {player1} and player 2 is {player2}! \nPlayer 1 goes first!')
-    
-    run_game(player1, player2)
+    run_game(player, other_player, player1_marker, player2_marker)
 
-def run_game(player1, player2):
-    player = player1
+def run_game(first_player, second_player, first_player_marker, second_player_marker):
+    '''
+    Main code logic to run the game
+    Allows players to replay if someone wins or there is a draw
+    
+    INPUT: first_player (string)
+            second_player (string)
+            first_player_marker (string)
+            second_player_marker (string)
+    '''
+    # initial values for first run
+    player = first_player
+    marker = first_player_marker
     board = [''] * 9
-    selected_num = []
+    selected_nums = []
     no_winner = True
     
     display_board(board)
     
+    # main game loop
     while (no_winner):
-        selection = validate_selection(f"\n{player} place your marker using a number (1 - 9, left to right, top to bottom): ", selected_num)
+        selection = validate_selection(f"\n{player} place your marker using a number (1 - 9, left to right, top to bottom): ", selected_nums)
         
-        no_winner = display_board(board, player, selection)
+        no_winner = display_board(board, marker, selection)
         
+        # no one has won yet
         if (no_winner == True):
+            # if the entire board is filled but no one has won, it's a draw
             if '' not in board:
                 print('\nThe game ends in a draw!')
                 replay()
                 break
             
-            if player == player1:
-                player = player2
+            if player == first_player:
+                player = second_player
+                marker = second_player_marker
             else:
-                player = player1
+                player = first_player
+                marker = first_player_marker
                 
             no_num_selected = True
+        # someone has won
         else:
             print(f'{player} wins!')
             replay()
 
 def replay():
-    user_input = 'Do you want to play again? [Y, N]'
+    '''
+    Replays the game depending on player input
+    '''
+    user_input = 'Do you want to play again? [Y, N]: '
     valid_key_1 = 'Y'
     valid_key_2 = 'N'
     
@@ -91,8 +128,51 @@ def replay():
         start_game()
     else:
         exit()
-                
-def validate_selection(selection, selected_num):
+
+def assign_players_and_markers():
+    '''
+    Randomly assigns which player goes first and allows 
+    users to select their markers (X, O).
+    
+    OUTPUT: player (string)
+            marker (string)
+            other_player (string)
+            other_marker (string)
+    '''
+    player = 'Player 1' if random.randint(1,2) == 1 else 'Player 2'
+    
+    user_input = f'{player} please pick a marker [X, O]: '
+    valid_key_1 = 'X'
+    valid_key_2 = 'O'
+    
+    marker = validate_input(user_input, valid_key_1, valid_key_2)
+    
+    if player == 'Player 1':
+        other_player = 'Player 2'
+        if marker == 'X':
+            other_marker = 'O'
+        else:
+            other_marker = 'X'
+    else:
+        other_player = 'Player 1'
+        if marker == 'X':
+            other_marker = 'O'
+        else:
+            other_marker = 'X'
+            
+    return (player, marker, other_player, other_marker)
+        
+def validate_selection(selection, selected_nums):
+    '''
+    Validates the player's board selection to ensure that it is a 
+    valid number within range.  Also checks that the player is 
+    not trying to reuse an already selected position.
+    
+    INPUT: selection (int)
+            selected_nums (list)
+            
+    OUTPUT: user_input (string)
+    '''
     while True:
         try:
             user_input = int(input(selection))
@@ -105,14 +185,23 @@ def validate_selection(selection, selected_num):
                 if (user_input < 0 or user_input > 8):
                     print("Out of range! Try again.")
                     break
-                elif (user_input in selected_num):
-                    print(f'{user_input} already used, pick another!')
+                elif (user_input in selected_nums):
+                    print(f'{user_input + 1} already used, pick another!')
                     break
                 else:
-                    selected_num.append(user_input)
+                    selected_nums.append(user_input)
                     return user_input
 
 def validate_input(user_input, valid_key_1, valid_key_2):
+    '''
+    Validates the player's input. 
+    
+    INPUT: user_input (string)
+            valid_key_1 (string)
+            valid_key_2 (string)
+            
+    OUTPUT: to_validate (string)
+    '''
     to_validate = ''
     
     while True:
@@ -125,4 +214,18 @@ def validate_input(user_input, valid_key_1, valid_key_2):
             print("Incorrect option! Try again.")
             continue
             
+# entry point for the game      
 start_game()
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
